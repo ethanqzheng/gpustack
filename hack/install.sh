@@ -13,6 +13,7 @@ source "${ROOT_DIR}/hack/lib/init.sh"
 
 function download_deps() {
   pip install poetry==1.8.3
+  poetry lock --no-update
   poetry install
   if [[ "${POETRY_ONLY:-false}" == "false" ]]; then
     pip install pre-commit==3.7.1

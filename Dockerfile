@@ -5,6 +5,8 @@ FROM nvidia/cuda:${CUDA_VERSION}${CUDA_TAG_SUFFIX}
 
 ARG TARGETPLATFORM
 ENV DEBIAN_FRONTEND=noninteractive
+ENV PIP_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple
+RUN sed -i 's@http://archive.ubuntu.com/@https://mirrors.tuna.tsinghua.edu.cn/@g' /etc/apt/sources.list
 
 RUN apt-get update && apt-get install -y \
     git \
