@@ -86,6 +86,7 @@ class DeviceTypeEnum(str, Enum):
     MUSA = "musa"
     DCU = "dcu"
     COREX = "corex"
+    ENFLAME = "gcu"
 
 
 def device() -> str:
@@ -143,6 +144,7 @@ def device_type_from_vendor(vendor: VendorEnum) -> str:
         VendorEnum.Hygon.value: DeviceTypeEnum.DCU.value,
         VendorEnum.MTHREADS.value: DeviceTypeEnum.MUSA.value,
         VendorEnum.Iluvatar.value: DeviceTypeEnum.COREX.value,
+        VendorEnum.Enflame.value: DeviceTypeEnum.ENFLAME.value,
     }
 
     return mapping.get(vendor, "")
