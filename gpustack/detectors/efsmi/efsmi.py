@@ -22,7 +22,7 @@ class EFSMI(GPUDetector):
     def gather_gpu_info(self) -> GPUDevicesInfo:
         devicestr =  ["efsmi", "-q", "-d", "DEVICE"]
         memstr =  ["efsmi", "-q", "-d", "MEMORY"]
-        return asyncio.run(_gather_gpu_info())
+        return asyncio.run(self._gather_gpu_info())
        
      
     def _run_command(self, command):
