@@ -110,6 +110,14 @@ jobs:
             platforms: "linux/amd64"
             tag_suffix: "-corex"
             build_args: []
+          #
+          # Enflame gcu
+          #
+          - device: gcu
+            dockerfile: "Dockerfile.gcu"
+            platforms: "linux/amd64"
+            tag_suffix: "-gcu"
+            build_args: []
 
     steps:
       - name: Checkout

@@ -131,7 +131,10 @@ def device() -> str:
 
     if is_command_available("ixsmi"):
         return "corex"
-
+    
+    if is_command_available("efsmi"):
+        return "gcu"
+    
     return ""
 
 

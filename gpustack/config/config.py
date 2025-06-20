@@ -437,7 +437,7 @@ class Config(BaseSettings):
 
             if type not in DeviceTypeEnum.__members__.values():
                 raise Exception(
-                    "Unsupported GPU type, supported type are: cuda, musa, npu, mps, rocm, dcu, corex"
+                    "Unsupported GPU type, supported type are: cuda, musa, npu, mps, rocm, dcu, corex, gcu"
                 )
 
             gpu_devices.append(
