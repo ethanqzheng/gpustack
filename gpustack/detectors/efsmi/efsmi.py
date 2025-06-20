@@ -109,11 +109,11 @@ class EFSMI(GPUDetector):
         for key, item in device_info.items:
             
             device = GPUDeviceInfo(
-                index=device_info[key]["DEV_ID"],
-                device_index=device_info[key]["DEV_ID"],
-                device_chip_index=device_info[key]["DEV_ID"],
-                name=device_info[key]["Dev_Name"],
-                uuid=device_info[key]["Dev_UUID"],
+                index=item["DEV_ID"],
+                device_index=item["DEV_ID"],
+                device_chip_index=item["DEV_ID"],
+                name=item["Dev_Name"],
+                uuid=item["Dev_UUID"],
                 vendor=VendorEnum.Enflame.value,
                 type=platform.DeviceTypeEnum.GPU.value,
                 core=GPUCoreInfo(
@@ -126,9 +126,8 @@ class EFSMI(GPUDetector):
                     utilization_rate=usage_info[key]["GCU_Usage"],
                 ),
             temperature = temperature_info[key]["GCU_Temp"],
-
             )
-        devices.append(device)
+            devices.append(device)
             
         return devices
 
