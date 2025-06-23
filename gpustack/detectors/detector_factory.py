@@ -43,7 +43,7 @@ class DetectorFactory:
             platform.DeviceTypeEnum.ROCM.value: [RocmSMI(), Regredit()],
             platform.DeviceTypeEnum.DCU.value: [RocmSMI()],
             platform.DeviceTypeEnum.COREX.value: [IXSMI()],
-            platform.DeviceTypeEnum.ENFLAME.value: [EFSMI()],        }
+            platform.DeviceTypeEnum.GCU.value: [EFSMI()],        }
 
     def _validate_detectors(self):
         if not self.system_info_detector.is_available():

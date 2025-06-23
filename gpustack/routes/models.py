@@ -277,6 +277,7 @@ def validate_gpu(
         VendorEnum.AMD.value,
         VendorEnum.Hygon.value,
         VendorEnum.Huawei.value,
+        VendorEnum.Enflame.value,
     ]:
         raise BadRequestException(
             f"vLLM backend is not supported on {gpu_device.vendor} GPUs."
