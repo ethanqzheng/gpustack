@@ -15,9 +15,7 @@ from gpustack.utils import platform
 
 class EFSMI(GPUDetector):
     def is_available(self) -> bool:
-        enableEfsmi = is_command_available("efsmi")
-        print("Checking EFSMI is available:", enableEfsmi)  # Debugging line to check if the function is_command_available("efsmi"))
-        return enableEfsmi
+        return is_command_available("efsmi")
 
     def gather_gpu_info(self) -> GPUDevicesInfo:
         return self._gather_gpu_info()
@@ -50,7 +48,7 @@ class EFSMI(GPUDetector):
                 error_message += f", stdout: {result.stdout}, stderr: {result.stderr}"
             raise Exception(error_message)
 
-    def _get_gpu_info(self, command) -> dict[int: dict[str,any]]:
+    def _get_gpu_info(self, command) -> dict[int, dict[str, any]]:
         output = self._run_command(command)
         if output is None:
             raise Exception("Failed to get GPU base info")
@@ -105,8 +103,7 @@ class EFSMI(GPUDetector):
         )
         
         
-        for key, item in device_info.items:
-            
+        for key, item in device_info.items():
             device = GPUDeviceInfo(
                 index=item["DEV_ID"],
                 device_index=item["DEV_ID"],
