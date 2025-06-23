@@ -27,9 +27,11 @@ class DetectorFactory:
     ):
         self.system_info_detector = system_info_detector or Fastfetch()
         self.device = device if device else platform.device()
+        logging.debug(f"device: {self.device}")
         if self.device:
             all_gpu_detectors = gpu_detectors or self._get_builtin_gpu_detectors()
             self.gpu_detectors = all_gpu_detectors.get(self.device)
+            logging.debug(f"gpu_detectors: {self.gpu_detectors}")
 
         self._validate_detectors()
 
