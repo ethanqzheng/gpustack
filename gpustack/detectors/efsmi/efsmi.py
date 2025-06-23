@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import re
 import subprocess
 from gpustack.detectors.base import GPUDetector
@@ -11,6 +12,8 @@ from gpustack.schemas.workers import (
 )
 from gpustack.utils.command import is_command_available
 from gpustack.utils import platform
+
+logger = logging.getLogger(__name__)
 
 
 class EFSMI(GPUDetector):
@@ -102,7 +105,7 @@ class EFSMI(GPUDetector):
             self._get_gpu_info(["efsmi", "-q", "-d", "USAGE"]),
         )
         
-        
+        logging.debug(f"DEVICE: {device_info} \nMEMORY:{memory_info} \n TEMP:{temperature_info} \n USAGE:{usage_info}")
         for key, item in device_info.items():
             device = GPUDeviceInfo(
                 index=item["DEV_ID"],
@@ -124,7 +127,7 @@ class EFSMI(GPUDetector):
             temperature = temperature_info[key]["GCU_Temp"],
             )
             devices.append(device)
-        print(devices)
+        logging.debug(f"Enflame GPU devices: {devices}")
         return devices
 
 

@@ -69,9 +69,11 @@ class DetectorFactory:
         if not self.device:
             return []
 
+        logging.debug(f"detect_gpus: {self.device}")
         for detector in self.gpu_detectors:
             if detector.is_available():
                 gpus = detector.gather_gpu_info()
+                logging.debug(f"detect_gpus gpus: {gpus}")
                 if gpus:
                     return self._filter_gpu_devices(gpus)
 
@@ -82,4 +84,5 @@ class DetectorFactory:
 
     def _filter_gpu_devices(self, gpu_devices: GPUDevicesInfo) -> GPUDevicesInfo:
         # Ignore the device without memory.
+        logging.debug(f"_filter_gpu_devices gpu_devices: {gpu_devices}")
         return [device for device in gpu_devices if device.memory.total > 0]
