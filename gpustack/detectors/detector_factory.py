@@ -69,7 +69,6 @@ class DetectorFactory:
         if not self.device:
             return []
 
-        logging.debug(f"detect_gpus: {self.device}")
         for detector in self.gpu_detectors:
             if detector.is_available():
                 gpus = detector.gather_gpu_info()

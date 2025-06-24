@@ -108,26 +108,26 @@ class EFSMI(GPUDetector):
         logging.debug(f"DEVICE: {device_info} \nMEMORY:{memory_info} \n TEMP:{temperature_info} \n USAGE:{usage_info}")
         for key, item in device_info.items():
             device = GPUDeviceInfo(
-                index=item["DEV_ID"],
-                device_index=item["DEV_ID"],
-                device_chip_index=item["DEV_ID"],
-                name=item["Dev_Name"],
-                uuid=item["Dev_UUID"],
-                vendor=VendorEnum.Enflame.value,
-                type=platform.DeviceTypeEnum.GPU.value,
-                core=GPUCoreInfo(
-                    total=int(memory_info[key]["Total_Size"]),
-                    utilization_rate= usage_info[key]["GCU_Usage"],
+                index = item["DEV_ID"],
+                device_index = item["DEV_ID"],
+                device_chip_index = item["DEV_ID"],
+                name = item["Dev_Name"],
+                uuid = item["Dev_UUID"],
+                vendor = VendorEnum.Enflame.value,
+                type = platform.DeviceTypeEnum.GPU.value,
+                core = GPUCoreInfo(
+                    utilization_rate = usage_info[key]["GCU_Usage"],
                 ),
-                memory=MemoryInfo(
-                    is_unified_memory=False,
-                    used=memory_info[key]["Used_Size"],
-                    utilization_rate=usage_info[key]["GCU_Usage"],
+                memory = MemoryInfo(
+                    is_unified_memory = False,
+                    total = memory_info[key]["Total_Size"],
+                    used = memory_info[key]["Used_Size"],
+                    utilization_rate = usage_info[key]["GCU_Usage"],
                 ),
-            temperature = temperature_info[key]["GCU_Temp"],
+                temperature = temperature_info[key]["GCU_Temp"],
             )
             devices.append(device)
-        logging.debug(f"Enflame GPU devices: {devices}")
+        print(devices)
         return devices
 
 
