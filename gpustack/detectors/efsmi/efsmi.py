@@ -114,7 +114,7 @@ class EFSMI(GPUDetector):
                 name = item["Dev_Name"],
                 uuid = item["Dev_UUID"],
                 vendor = VendorEnum.Enflame.value,
-                type = platform.DeviceTypeEnum.GPU.value,
+                type = platform.DeviceTypeEnum.GCU.value,
                 core = GPUCoreInfo(
                     utilization_rate = usage_info[key]["GCU_Usage"],
                 ),
@@ -128,6 +128,7 @@ class EFSMI(GPUDetector):
             )
             devices.append(device)
         print(devices)
+        logging.debug(f"enflame devices: {devices}")
         return devices
 
 
