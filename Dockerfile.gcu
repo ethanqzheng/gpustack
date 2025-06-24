@@ -32,7 +32,7 @@ RUN apt-get update && apt-get install -y \
 
 COPY --from=build /workspace/gpustack/dist/*.whl /dist/
 RUN pip install /dist/*.whl && \
-    #pip cache purge && \
+    pip cache purge && \
     rm -rf /dist
 
 RUN gpustack download-tools
