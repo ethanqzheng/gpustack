@@ -72,6 +72,7 @@ class WorkerManager:
         try:
             worker = collector.collect()
             result = self._clientset.workers.list(params={"name": self._worker_name})
+            logger.debug(f"Worker {self._worker_name} registered, result: {result}")
         except Exception as e:
             logger.error(f"Failed to update status for worker {self._worker_name}: {e}")
             return

@@ -73,7 +73,6 @@ class WorkerStatusCollector:
             try:
                 gpu_devices = self._detector_factory.detect_gpus()
                 status.gpu_devices = gpu_devices
-                print("GPU_devices", gpu_devices)
             except Exception as e:
                 logger.error(f"Failed to detect GPU devices: {e}")
 

@@ -105,7 +105,6 @@ class EFSMI(GPUDetector):
             self._get_gpu_info(["efsmi", "-q", "-d", "USAGE"]),
         )
         
-        logging.debug(f"DEVICE: {device_info} \nMEMORY:{memory_info} \n TEMP:{temperature_info} \n USAGE:{usage_info}")
         for key, item in device_info.items():
             device = GPUDeviceInfo(
                 index = item["DEV_ID"],
@@ -127,8 +126,6 @@ class EFSMI(GPUDetector):
                 temperature = temperature_info[key]["GCU_Temp"],
             )
             devices.append(device)
-        print(devices)
-        logging.debug(f"enflame devices: {devices}")
         return devices
 
 
