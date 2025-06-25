@@ -119,8 +119,8 @@ class EFSMI(GPUDetector):
                 ),
                 memory = MemoryInfo(
                     is_unified_memory = False,
-                    total = memory_info[key]["Total_Size"],
-                    used = memory_info[key]["Used_Size"],
+                    total = int(memory_info[key]["Total_Size"]),
+                    used = int(memory_info[key]["Used_Size"]),
                     utilization_rate = usage_info[key]["GCU_Usage"],
                 ),
                 temperature = temperature_info[key]["GCU_Temp"],

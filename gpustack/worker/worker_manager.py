@@ -94,6 +94,7 @@ class WorkerManager:
         ensure_builtin_labels(worker)
 
         try:
+            logger.debug(f"update  {current.id} Worker: {worker}")
             result = self._clientset.workers.update(id=current.id, model_update=worker)
         except Exception as e:
             logger.error(f"Failed to update worker {self._worker_name} status: {e}")

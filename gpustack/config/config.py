@@ -120,8 +120,8 @@ class Config(BaseSettings):
     worker_name: Optional[str] = None
     disable_metrics: bool = False
     disable_rpc_servers: bool = False
-    worker_port: int = 10150
-    metrics_port: int = 10151
+    worker_port: int = 10156
+    metrics_port: int = 10157
     service_port_range: Optional[str] = "40000-40063"
     rpc_server_port_range: Optional[str] = "40064-40095"
     ray_worker_port_range: Optional[str] = "40100-40131"
