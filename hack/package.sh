@@ -7,8 +7,8 @@ set -o pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 source "${ROOT_DIR}/hack/lib/init.sh"
 
-PACKAGE_NAMESPACE=${PACKAGE_NAMESPACE:-gpustack}
-PACKAGE_REPOSITORY=${PACKAGE_REPOSITORY:-gpustack}
+PACKAGE_NAMESPACE=${PACKAGE_NAMESPACE:-swr.cn-east-3.myhuaweicloud.com/cloud-mdgx}
+PACKAGE_REPOSITORY=${PACKAGE_REPOSITORY:-seabed}
 PACKAGE_ARCH=${PACKAGE_ARCH:-$(uname -m | sed 's/aarch64/arm64/' | sed 's/x86_64/amd64/')}
 PACKAGE_TAG=${PACKAGE_TAG:-dev}
 PACKAGE_WITH_CACHE=${PACKAGE_WITH_CACHE:-true}
@@ -20,19 +20,19 @@ function pack() {
         exit 1
     fi
 
-    if ! docker buildx inspect --builder "gpustack" &>/dev/null; then
-        gpustack::log::info "Creating new buildx builder 'gpustack'"
+    if ! docker buildx inspect --builder "seabed" &>/dev/null; then
+        gpustack::log::info "Creating new buildx builder 'seabed'"
         docker run --rm --privileged tonistiigi/binfmt:qemu-v9.2.2-52 --uninstall qemu-*
         docker run --rm --privileged tonistiigi/binfmt:qemu-v9.2.2-52 --install all
         docker buildx create \
-            --name "gpustack" \
+            --name "seabed" \
             --driver "docker-container" \
             --driver-opt "network=host,default-load=true,env.BUILDKIT_STEP_LOG_MAX_SIZE=-1,env.BUILDKIT_STEP_LOG_MAX_SPEED=-1" \
             --buildkitd-flags "--allow-insecure-entitlement=security.insecure --allow-insecure-entitlement=network.host --oci-worker-net=host --oci-worker-gc-keepstorage=204800" \
             --bootstrap
     fi
 
-    LABELS=("org.opencontainers.image.source=https://github.com/gpustack/gpustack" "org.opencontainers.image.version=main" "org.opencontainers.image.revision=$(git rev-parse HEAD 2>/dev/null || echo "unknown")" "org.opencontainers.image.created=$(date +"%Y-%m-%dT%H:%M:%S.%s")");
+    LABELS=("org.opencontainers.image.source=https://gitlab.metastonecorp.com/seabed/seabed-maas" "org.opencontainers.image.version=master" "org.opencontainers.image.revision=$(git rev-parse HEAD 2>/dev/null || echo "unknown")" "org.opencontainers.image.created=$(date +"%Y-%m-%dT%H:%M:%S.%s")");
     TAG="${PACKAGE_NAMESPACE}/${PACKAGE_REPOSITORY}:${PACKAGE_TAG}"
     EXTRA_ARGS=()
 	if [[ "${PACKAGE_WITH_CACHE}" == "true" ]]; then
@@ -50,7 +50,7 @@ function pack() {
         --pull \
         --allow network.host \
         --allow security.insecure \
-        --builder "gpustack" \
+        --builder "seabed" \
         --platform "linux/${PACKAGE_ARCH}" \
         --tag "${TAG}" \
         --file "${ROOT_DIR}/pack/Dockerfile" \
