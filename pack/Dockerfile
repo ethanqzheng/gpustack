@@ -295,13 +295,13 @@ ARG TARGETARCH
 ARG VERSION
 
 ## Configure data volume
-VOLUME /var/lib/gpustack
-ENV GPUSTACK_RUNTIME_DOCKER_EPHEMERAL_FILES_DIR="/var/lib/gpustack/cache/gpustack-runtime"
+VOLUME /var/lib/seabed
+ENV GPUSTACK_RUNTIME_DOCKER_EPHEMERAL_FILES_DIR="/var/lib/seabed/cache/gpustack-runtime"
 
 ## Install PostgreSQL
 
 ENV PGCONFIG_FILE=/etc/postgresql/main/postgresql.conf \
-    POSTGRES_DB=gpustack
+    POSTGRES_DB=seabed
 
 RUN set -eux; \
 	groupadd -r postgres --gid=9999; \
@@ -479,8 +479,8 @@ RUN --mount=type=cache,target=/root/.cache \
     tree -hs "$(pip show gpustack | grep Location: | head -n 1 | cut -d" " -f 2)/gpustack/third_party"
 
     # Set up environment
-    mkdir -p /var/lib/gpustack \
-        && chmod -R 0755 /var/lib/gpustack
+    mkdir -p /var/lib/seabed \
+        && chmod -R 0755 /var/lib/seabed
 
     # Review
     uv pip tree \
