@@ -56,6 +56,40 @@ function download_ui() {
   rm -rf "${tmp_ui_path}"
 }
 
+function download_seabed_ui() {
+  local default_tag="latest"
+  local ui_path="${ROOT_DIR}/gpustack/ui"
+  local tmp_ui_path="${ui_path}/tmp"
+  local tag="latest"
+  local url=""
+
+  if [[ "${GIT_VERSION}" != "v0.0.0" ]]; then
+    tag="${GIT_VERSION}"
+  fi
+
+  rm -rf "${ui_path}"
+  mkdir -p "${tmp_ui_path}/ui"
+
+  url="https://gitee.com/metastone-project/seabed-ui/releases/download/${tag}/${tag}.tar.gz"
+  gpustack::log::info "downloading seabed-ui UI assets from '${url}'"
+
+  # 使用 wget 下载；若 wget 不存在则报错（保持与手动验证方式一致）
+  if ! command -v wget &>/dev/null; then
+    gpustack::log::fatal "wget is required to download seabed-ui UI assets but was not found. Please install wget and retry."
+  fi
+
+  if ! wget --tries=3 --timeout=30 -qO- "${url}" | tar -xzf - --directory "${tmp_ui_path}/ui" 2>/dev/null; then
+    gpustack::log::warn "wget failed to download '${tag}' ui archive, fallback to '${default_tag}' ui archive"
+    if ! wget --tries=3 --timeout=30 -qO- "https://gitee.com/metastone-project/seabed-ui/raw/master/ui-package/${default_tag}.tar.gz" | tar -xzf - --directory "${tmp_ui_path}/ui" 2>/dev/null; then
+      gpustack::log::fatal "failed to download '${default_tag}' ui archive"
+    fi
+  fi
+  cp -a "${tmp_ui_path}/ui/dist/." "${ui_path}"
+
+  rm -rf "${tmp_ui_path}"
+
+}
+
 # Copy extra static files to ui including catalog icons
 function copy_extra_static() {
   local extra_static_path="${ROOT_DIR}/static"
@@ -71,6 +105,7 @@ function copy_extra_static() {
 
 gpustack::log::info "+++ DEPENDENCIES +++"
 download_deps
-download_ui
+# download_ui
+download_seabed_ui
 copy_extra_static
 gpustack::log::info "--- DEPENDENCIES ---"
