@@ -119,7 +119,7 @@ class Config(BaseSettings):
     huggingface_token: Optional[str] = None
     system_default_container_registry: Optional[str] = None
     image_name_override: Optional[str] = None
-    image_repo: str = "gpustack/gpustack"
+    image_repo: str = "cloud-mdgx/seabed"
     gateway_mode: GatewayModeEnum = GatewayModeEnum.auto
     gateway_kubeconfig: Optional[str] = None
     gateway_concurrency: int = 16

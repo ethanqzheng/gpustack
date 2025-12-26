@@ -834,6 +834,9 @@ $@
            and with "gpustack" prefix, using docker.io as default if docker.io is reachable.
            Otherwise, using quay.io.
         """
+        if image.startswith("gpustack/runner"):
+            image = image.replace("gpustack/runner", "cloud-mdgx/runner", 1)
+
         registry_cfg = (self._config.system_default_container_registry or "").strip()
 
         parts = image.split("/", 1)

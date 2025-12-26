@@ -90,10 +90,10 @@ def determine_default_registry(override: Optional[str] = None) -> Optional[str]:
     if override is not None and len(override) > 0:
         return override
     docker_hub_reachable = check_registry_reachable("https://registry-1.docker.io")
-    quay_io_reachable = check_registry_reachable("https://quay.io")
+    custom_hub_reachable = check_registry_reachable("https://swr.cn-east-3.myhuaweicloud.com")
     if docker_hub_reachable:
         return None
-    elif quay_io_reachable:
-        return "quay.io"
+    elif custom_hub_reachable:
+        return "swr.cn-east-3.myhuaweicloud.com"
     else:
         return None
