@@ -292,6 +292,7 @@ SHELL ["/bin/bash", "-eo", "pipefail", "-c"]
 ARG TARGETPLATFORM
 ARG TARGETOS
 ARG TARGETARCH
+ARG VERSION
 
 ## Configure data volume
 VOLUME /var/lib/gpustack
@@ -443,6 +444,7 @@ EOF
 
 ## Install GPUStack
 
+ARG VERSION
 RUN --mount=type=cache,target=/root/.cache \
     --mount=type=bind,target=/workspace/gpustack,rw \
     --mount=type=bind,from=ghcr.io/oras-project/oras:v1.3.0,source=/bin/oras,dst=/bin/oras <<EOF
@@ -453,6 +455,7 @@ RUN --mount=type=cache,target=/root/.cache \
     export UV_SYSTEM_PYTHON=1
     export UV_PRERELEASE=allow
     export UV_LINK_MODE=copy
+    export VERSION=${VERSION}
 
     # Build GPUStack
     cd /workspace/gpustack \
