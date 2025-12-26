@@ -19,7 +19,7 @@ if [ "${GPUSTACK_DATA_MIGRATION}" = "true" ]; then
 
     echo "[INFO] Using GPUSTACK_MIGRATION_DATA_DIR: ${DATA_DIR}."
     if gpustack migrate --migration-data-dir "${DATA_DIR}" \
-        --database-url "postgresql://root@localhost:${EMBEDDED_DATABASE_PORT}/gpustack"; then
+        --database-url "postgresql://root@localhost:${EMBEDDED_DATABASE_PORT}/seabed"; then
         # shellcheck disable=SC2086
         mkdir -p "$(dirname ${STATE_MIGRATION_DONE_FILE})"
         touch "$STATE_MIGRATION_DONE_FILE"

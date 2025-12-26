@@ -62,8 +62,8 @@ gosu postgres pg_ctl -s -D "$PGDATA" -o "-c listen_addresses='localhost' -c port
 if ! gosu postgres psql -p "$EMBEDDED_DATABASE_PORT" -tAc "SELECT 1 FROM pg_roles WHERE rolname='root'" | grep -q 1; then
     gosu postgres psql -p "$EMBEDDED_DATABASE_PORT" -q --command "CREATE USER root WITH PASSWORD '$ROOT_PASS';" > /dev/null
 fi
-if ! gosu postgres psql -p "$EMBEDDED_DATABASE_PORT" -tAc "SELECT 1 FROM pg_database WHERE datname='gpustack'" | grep -q 1; then
-    gosu postgres psql -p "$EMBEDDED_DATABASE_PORT" -q --command "CREATE DATABASE gpustack OWNER root;" > /dev/null
+if ! gosu postgres psql -p "$EMBEDDED_DATABASE_PORT" -tAc "SELECT 1 FROM pg_database WHERE datname='seabed'" | grep -q 1; then
+    gosu postgres psql -p "$EMBEDDED_DATABASE_PORT" -q --command "CREATE DATABASE seabed OWNER root;" > /dev/null
 fi
 gosu postgres pg_ctl -p "$EMBEDDED_DATABASE_PORT" -s -D "$PGDATA" -m fast -w stop > /dev/null
 

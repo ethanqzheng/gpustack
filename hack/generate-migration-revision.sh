@@ -13,7 +13,7 @@ if [ $# -eq 0 ]; then
     show_help
 fi
 MESSAGE="$*"
-DEFAULT_DATABASE_URL="postgresql://root@localhost:5432/gpustack?sslmode=disable"
+DEFAULT_DATABASE_URL="postgresql://root@localhost:5432/seabed?sslmode=disable"
 DATABASE_URL=${DATABASE_URL:-$DEFAULT_DATABASE_URL}
 
 export DATABASE_URL

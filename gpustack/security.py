@@ -10,7 +10,7 @@ from gpustack import envs
 
 ph = PasswordHasher()
 
-API_KEY_PREFIX = "gpustack"
+API_KEY_PREFIX = "seabed"
 
 
 @lru_cache(maxsize=2048)

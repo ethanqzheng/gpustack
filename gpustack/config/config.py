@@ -553,7 +553,7 @@ class Config(BaseSettings):
         if self.database_url is not None:
             return self.database_url
         return (
-            f"postgresql://root@127.0.0.1:{self.database_port}/gpustack?sslmode=disable"
+            f"postgresql://root@127.0.0.1:{self.database_port}/seabed?sslmode=disable"
         )
 
     def check_database_url(self):
@@ -576,7 +576,7 @@ class Config(BaseSettings):
 
     @staticmethod
     def get_data_dir():
-        app_name = "gpustack"
+        app_name = "seabed"
         if os.name == "nt":  # Windows
             data_dir = os.path.join(os.environ["APPDATA"], app_name)
         elif os.name == "posix":
