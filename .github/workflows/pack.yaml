@@ -12,35 +12,21 @@ defaults:
     shell: bash
 
 on:
-  workflow_dispatch: {}
-  push:
-    branches:
-      - "main"
-      - "v*-dev"
-    tags:
-      - "v*.*.*"
-    paths-ignore:
-      - "mkdocs.yml"
-      - "docs/**"
-      - "**.md"
-      - "**.mdx"
-      - "**.png"
-      - "**.jpg"
-      - "**.gif"
-  pull_request:
-    branches:
-      - "main"
-      - "v*-dev"
-    paths:
-      - ".github/workflows/pack.yaml"
-      - "pack/**"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '镜像版本号 (例如: v2.0.1)'
+        required: true
+        default: 'v2.0.1'
+        type: string
 
 env:
   INPUT_PYTHON_VERSION: 3.11
-  INPUT_USERNAME: gpustack
-  INPUT_PASSWORD: ${{ secrets.CI_DOCKERHUB_PASSWORD }}
-  INPUT_NAMESPACE: gpustack
-  INPUT_REPOSITORY: gpustack
+  INPUT_REGISTRY: swr.cn-east-3.myhuaweicloud.com
+  INPUT_USERNAME: ${{ secrets.CI_SWR_USERNAME }}
+  INPUT_PASSWORD: ${{ secrets.CI_SWR_PASSWORD }}
+  INPUT_NAMESPACE: cloud-mdgx
+  INPUT_REPOSITORY: seabed
 
 jobs:
   pack:
@@ -83,18 +69,20 @@ jobs:
             network=host
             env.BUILDKIT_STEP_LOG_MAX_SIZE=-1
             env.BUILDKIT_STEP_LOG_MAX_SPEED=-1
-      - name: Login DockerHub
+      - name: Login Docker Registry
         if: ${{ github.event_name != 'pull_request' }}
         uses: docker/login-action@v3
         with:
+          registry: ${{ env.INPUT_REGISTRY }}
           username: ${{ env.INPUT_USERNAME }}
           password: ${{ env.INPUT_PASSWORD }}
       - name: Get Metadata
         id: metadata
         uses: docker/metadata-action@v5
         with:
-          images: "${{ env.INPUT_NAMESPACE }}/${{ env.INPUT_REPOSITORY }}"
+          images: "${{ env.INPUT_REGISTRY }}/${{ env.INPUT_NAMESPACE }}/${{ env.INPUT_REPOSITORY }}"
           tags: |
+            type=raw,value=${{ inputs.version }},enable=${{ github.event_name == 'workflow_dispatch' }}
             type=ref,event=branch
             type=ref,event=pr
             type=pep440,pattern={{raw}}
