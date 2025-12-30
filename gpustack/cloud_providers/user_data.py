@@ -7,7 +7,7 @@ from gpustack_runtime.detector import ManufacturerEnum
 # are pre-installed on the base image
 default_user_data_template = """#cloud-config
 write_files:
-  - path: /var/lib/gpustack/config.yaml
+  - path: /var/lib/seabed/config.yaml
     permissions: '0644'
     content: |
       server_url: {server_url}
@@ -23,9 +23,9 @@ write_files:
       docker run -d --name gpustack-worker \\
       --restart=unless-stopped \\
       --privileged --net=host \\
-      -v /var/lib/gpustack:/var/lib/gpustack \\
+      -v /var/lib/seabed:/var/lib/seabed \\
       -v /var/run/docker.sock:/var/run/docker.sock \\
-      {image_name} --config-file=/var/lib/gpustack/config.yaml
+      {image_name} --config-file=/var/lib/seabed/config.yaml
 
       echo "$(date): gpustack worker container started" >> /var/log/post-reboot.log
 """

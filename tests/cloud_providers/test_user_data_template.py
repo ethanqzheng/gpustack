@@ -16,7 +16,7 @@ def test_userdata_template_basic():
     data = yaml.safe_load(result)
     assert data["write_files"]
     assert any(
-        f["path"] == "/var/lib/gpustack/config.yaml" for f in data["write_files"]
+        f["path"] == "/var/lib/seabed/config.yaml" for f in data["write_files"]
     )
     assert any(f["path"] == "/opt/gpustack-run-worker.sh" for f in data["write_files"])
     assert "runcmd" in data
@@ -73,7 +73,7 @@ def test_userdata_template_env_in_worker_script():
         f for f in data["write_files"] if f["path"] == "/opt/gpustack-run-worker.sh"
     )
     assert (
-        "--config-file=/var/lib/gpustack/config.yaml" in worker_script_file["content"]
+        "--config-file=/var/lib/seabed/config.yaml" in worker_script_file["content"]
     )
 
 

@@ -142,7 +142,7 @@ def upgrade() -> None:
 def write_bootstrap_version():
     """Writes the bootstrap_version file to the data directory."""
     gpustack_config = gpustack.config.config.get_global_config()
-    data_dir = gpustack_config.data_dir if gpustack_config else "/var/lib/gpustack"
+    data_dir = gpustack_config.data_dir if gpustack_config else "/var/lib/seabed"
 
     # As of v2.0.1, writes a bootstrap_version file to the data directory.
     # We can make compatibility decisions based on this file in the future.

@@ -52,12 +52,12 @@ function waitForConfig() {
     done
 }
 
-export GPUSTACK_GATEWAY_DIR="${GPUSTACK_GATEWAY_DIR:-/var/lib/gpustack/higress}"
+export GPUSTACK_GATEWAY_DIR="${GPUSTACK_GATEWAY_DIR:-/var/lib/seabed/higress}"
 createDir "$GPUSTACK_GATEWAY_DIR"
 # shellcheck disable=SC2034
 export GPUSTACK_GATEWAY_CONFIG="${GPUSTACK_GATEWAY_DIR}/.env"
 
-export GPUSTACK_POSTGRES_DIR="${GPUSTACK_POSTGRES_DIR:-/var/lib/gpustack/postgresql}"
+export GPUSTACK_POSTGRES_DIR="${GPUSTACK_POSTGRES_DIR:-/var/lib/seabed/postgresql}"
 createDir "$GPUSTACK_POSTGRES_DIR"
 # shellcheck disable=SC2034
 export GPUSTACK_POSTGRES_CONFIG="${GPUSTACK_POSTGRES_DIR}/.env"

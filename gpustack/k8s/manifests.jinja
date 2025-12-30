@@ -163,7 +163,7 @@ spec:
           terminationMessagePolicy: File
           volumeMounts:
             - name: gpustack-data-dir
-              mountPath: /var/lib/gpustack
+              mountPath: /var/lib/seabed
             #
             # (Optional) Mount Ascend driver and toolkit directories if using Ascend devices
             #
@@ -202,7 +202,7 @@ spec:
       volumes:
         - name: gpustack-data-dir
           hostPath:
-            path: /var/lib/gpustack
+            path: /var/lib/seabed
             type: DirectoryOrCreate
         #
         # (Optional) Mount Ascend driver and toolkit directories if using Ascend devices

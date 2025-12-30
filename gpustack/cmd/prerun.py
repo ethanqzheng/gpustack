@@ -150,13 +150,13 @@ def migrate_hardcode_postgres_data_and_password(
     # in post 2.0.0 versions, we support custom data dir via cfg.data_dir.
     # here we migrate the data from hardcoded paths to the new paths if needed.
     pair = {
-        "/var/lib/gpustack/postgres/data": os.path.join(
+        "/var/lib/seabed/postgres/data": os.path.join(
             cfg.postgres_base_dir(), "data"
         ),
-        "/var/lib/gpustack/postgres_root_pass": os.path.join(
+        "/var/lib/seabed/postgres_root_pass": os.path.join(
             cfg.data_dir, "postgres_root_pass"
         ),
-        "/var/lib/gpustack/run/migration_done": get_migration_done_file(cfg),
+        "/var/lib/seabed/run/migration_done": get_migration_done_file(cfg),
     }
     for hardcode_path, target_path in pair.items():
         if hardcode_path == target_path or not os.path.exists(hardcode_path):

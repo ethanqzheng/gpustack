@@ -6,7 +6,7 @@ services:
     privileged: true
     network_mode: host
     volumes:
-      - gpustack-data:/var/lib/gpustack
+      - gpustack-data:/var/lib/seabed
       - /var/run/docker.sock:/var/run/docker.sock
     runtime: nvidia
     command: 

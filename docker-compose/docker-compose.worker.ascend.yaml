@@ -16,7 +16,7 @@ services:
     environment:
       ASCEND_VISIBLE_DEVICES: "${ASCEND_VISIBLE_DEVICES}"
     volumes:
-      - gpustack-data:/var/lib/gpustack
+      - gpustack-data:/var/lib/seabed
       - /var/run/docker.sock:/var/run/docker.sock
     runtime: ascend
     command: 
