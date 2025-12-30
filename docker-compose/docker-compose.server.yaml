@@ -1,17 +1,17 @@
 services:
-  gpustack-server:
-    image: gpustack/gpustack
-    container_name: gpustack-server
+  seabed-server:
+    image: swr.cn-east-3.myhuaweicloud.com/cloud-mdgx/seabed:{$TAG:-latest}
+    container_name: seabed-server
     restart: unless-stopped
     volumes:
-      - gpustack-data:/var/lib/gpustack
+      - seabed-data:/var/lib/seabed
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - "80:80"
 
   prometheus:
     image: prom/prometheus
-    container_name: gpustack-prometheus
+    container_name: seabed-prometheus
     restart: unless-stopped
     ports:
       - "9090:9090"
@@ -24,7 +24,7 @@ services:
 
   grafana:
     image: grafana/grafana
-    container_name: gpustack-grafana
+    container_name: seabed-grafana
     restart: unless-stopped
     environment:
       - GF_SERVER_HTTP_PORT=3000
@@ -41,4 +41,4 @@ services:
 
 volumes:
   prom_data: {}
-  gpustack-data: {}
+  seabed-data: {}
