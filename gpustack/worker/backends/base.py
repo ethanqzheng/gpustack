@@ -829,9 +829,9 @@ $@
         2) If the image does not have an explicit registry and a system default registry is configured,
            prefix the image with the system default registry in config.
         3) If the image does not have an explicit registry and no system default registry is configured,
-           using docker.io as default if image without "gpustack" prefix.
+           using docker.io as default if image without "gpustack" or "cloud-mdgx" prefix.
         4) If the image does not have an explicit registry and no system default registry is configured,
-           and with "gpustack" prefix, using docker.io as default if docker.io is reachable.
+           and with "gpustack" or "cloud-mdgx" prefix, using docker.io as default if docker.io is reachable.
            Otherwise, using quay.io.
         """
         if image.startswith("gpustack/runner"):
@@ -856,8 +856,8 @@ $@
             )
             return final
 
-        # 3) no explicit or configured, and not start with "gpustack" using "docker.io" as default.
-        if not image.startswith("gpustack"):
+        # 3) no explicit or configured, and not start with "gpustack" or "cloud-mdgx" using "docker.io" as default.
+        if not image.startswith("gpustack") and not image.startswith("cloud-mdgx"):
             logger.info(
                 f"Using Docker Hub for non-gpustack image; image resolved to: {image}"
             )

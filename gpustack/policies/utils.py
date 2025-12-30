@@ -80,14 +80,29 @@ async def get_worker_allocatable_resource(  # noqa: C901
 
             if gpu.memory is None or gpu.memory.total is None:
                 continue
-            allocatable_vram = max(
-                (
-                    gpu.memory.total
-                    - allocated.vram.get(gpu_index, 0)
-                    - worker.system_reserved.vram
-                ),
-                0,
-            )
+            # Use actual free memory to account for non-GPUStack processes (e.g., ComfyUI, Jupyter)
+            # The 'used' field from GPU detector includes memory used by ALL processes
+            if gpu.memory.used is not None:
+                # Calculate truly available memory based on actual GPU usage
+                # free_memory = total - used (by all processes including GPUStack and others)
+                # Then subtract system reserved to get allocatable
+                gpu_free_memory = gpu.memory.total - gpu.memory.used
+                allocatable_vram = max(
+                    gpu_free_memory - worker.system_reserved.vram,
+                    0,
+                )
+            else:
+                # Fallback to original calculation if 'used' is not available
+                # This may not account for non-GPUStack processes
+                allocatable_vram = max(
+                    (
+                        gpu.memory.total
+                        - allocated.vram.get(gpu_index, 0)
+                        - worker.system_reserved.vram
+                    ),
+                    0,
+                )
+      
             allocatable.vram[gpu_index] = allocatable_vram
 
     allocatable.ram = max(
