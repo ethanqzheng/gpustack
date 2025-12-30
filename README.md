@@ -27,9 +27,13 @@
 
 <br>
 
+> **Note:** This product (Seabed) is developed based on [GPUStack](https://github.com/gpustack/gpustack) licensed under Apache 2.0. We have modified some of the code. The original GPUStack software and its rights belong to the GPUStack authors. See [NOTICE](./NOTICE) and [LICENSE.ORIGINAL](./LICENSE.ORIGINAL) for more information.
+
 ## Overview
 
-GPUStack is an open-source GPU cluster manager designed for efficient AI model deployment. It lets you run models efficiently on your own GPU hardware by choosing the best inference engines, scheduling GPU resources, analyzing model architectures, and automatically configuring deployment parameters.
+Seabed is a GPU cluster manager designed for efficient AI model deployment. It lets you run models efficiently on your own GPU hardware by choosing the best inference engines, scheduling GPU resources, analyzing model architectures, and automatically configuring deployment parameters.
+
+This software is developed based on GPUStack, and we have modified some of the code.
 
 The following figure shows how GPUStack delivers improved inference throughput over the unoptimized vLLM baseline:
 
@@ -193,11 +197,15 @@ Any issues or have suggestions, feel free to join our [Community](https://discor
 
 ## License
 
-Copyright (c) 2024-2025 The GPUStack authors
+Copyright (c) 2024-2025 MetaStone
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at [LICENSE](./LICENSE) file for details.
+
+This software contains open-source components licensed under Apache 2.0 from GPUStack.
+The rights to these components belong to their original authors (The GPUStack authors).
+See [NOTICE](./NOTICE) and [LICENSE.ORIGINAL](./LICENSE.ORIGINAL) for more information.
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,

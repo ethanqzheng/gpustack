@@ -27,9 +27,13 @@
 
 <br>
 
+> **注意：** 本产品（Seabed）基于 [GPUStack](https://github.com/gpustack/gpustack) 开发，GPUStack 采用 Apache 2.0 许可证。我们已对部分代码进行了修改。原始 GPUStack 软件及其权利归 GPUStack 作者所有。更多信息请参阅 [NOTICE](./NOTICE) 和 [LICENSE.ORIGINAL](./LICENSE.ORIGINAL)。
+
 ## 概述
 
-GPUStack 是一个开源的 GPU 集群管理器，专为高效的 AI 模型部署而设计。它允许您在自己的 GPU 硬件上高效运行模型，通过选择最佳推理引擎、调度 GPU 资源、分析模型架构以及自动配置部署参数来实现。
+Seabed 是一个 GPU 集群管理器，专为高效的 AI 模型部署而设计。它允许您在自己的 GPU 硬件上高效运行模型，通过选择最佳推理引擎、调度 GPU 资源、分析模型架构以及自动配置部署参数来实现。
+
+本软件基于 GPUStack 开发，我们已对部分代码进行了修改。
 
 下图展示了 GPUStack 相较于未优化的 vLLM 基线如何提供更高的推理吞吐量：
 
@@ -191,11 +195,15 @@ curl http://your_gpustack_server_url/v1/chat/completions \
 
 ## 许可证
 
-版权所有 (c) 2024-2025 GPUStack 作者
+版权所有 (c) 2024-2025 MetaStone
 
 根据 Apache License, Version 2.0（"许可证"）授权；
 除非符合许可证，否则您不得使用此文件。
 您可以在 [LICENSE](./LICENSE) 文件中获取许可证副本。
+
+本软件包含来自 GPUStack 的 Apache 2.0 许可的开源组件。
+这些组件的权利归其原始作者（GPUStack 作者）所有。
+更多信息请参阅 [NOTICE](./NOTICE) 和 [LICENSE.ORIGINAL](./LICENSE.ORIGINAL)。
 
 除非适用法律要求或书面同意，根据许可证分发的软件按"原样"分发，无任何明示或暗示的担保或条件。
 请参阅许可证中规定的特定语言管理权限及许可证下的限制。

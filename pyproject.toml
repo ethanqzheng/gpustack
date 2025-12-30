@@ -1,8 +1,8 @@
 [project]
-name = "gpustack"
+name = "seabed"
 version = "v0.0.0"
-description = "GPUStack"
-authors = [{name = "GPUStack Authors", email = "contact@gpustack.ai"}]
+description = "Seabed - Commercial version based on GPUStack"
+authors = [{name = "MetaStone", email = "contactus@metastonecorp.com"}]
 readme = "README.md"
 requires-python = ">=3.10,<3.13"
 dependencies = [
@@ -105,7 +105,8 @@ all = [
 ]
 
 [project.scripts]
-gpustack = "gpustack.main:main"
+seabed = "gpustack.main:main"
+gpustack = "gpustack.main:main"  # Backward compatibility
 
 [build-system]
 requires = ["hatchling<1.27"]

@@ -294,6 +294,11 @@ ARG TARGETOS
 ARG TARGETARCH
 ARG VERSION
 
+## License Information
+LABEL vendor="MetaStone" \
+    license="Apache-2.0" \
+    description="Seabed - Commercial version based on GPUStack"
+
 ## Configure data volume
 VOLUME /var/lib/seabed
 ENV GPUSTACK_RUNTIME_DOCKER_EPHEMERAL_FILES_DIR="/var/lib/seabed/cache/gpustack-runtime"
@@ -692,6 +697,12 @@ ENV GPUSTACK_RUNTIME_LOG_EXCEPTION="false" \
     GPUSTACK_SYSTEM_DEFAULT_CONTAINER_REGISTRY="swr.cn-east-3.myhuaweicloud.com"
 
 COPY --chmod=755 pack/entrypoint.sh /usr/bin/entrypoint.sh
+
+## Copy License Files
+RUN mkdir -p /usr/share/licenses/seabed
+COPY LICENSE /usr/share/licenses/seabed/LICENSE
+COPY LICENSE.ORIGINAL /usr/share/licenses/seabed/ORIGINAL_LICENSE
+COPY NOTICE /usr/share/licenses/seabed/NOTICE
 
 WORKDIR /
 ENTRYPOINT [ "/usr/bin/entrypoint.sh" ]
