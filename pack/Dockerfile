@@ -481,7 +481,7 @@ RUN --mount=type=cache,target=/root/.cache \
 
     # Download tools
     gpustack download-tools
-    tree -hs "$(pip show gpustack | grep Location: | head -n 1 | cut -d" " -f 2)/gpustack/third_party"
+    tree -hs "$(pip show seabed | grep Location: | head -n 1 | cut -d" " -f 2)/gpustack/third_party"
 
     # Set up environment
     mkdir -p /var/lib/seabed \
@@ -489,7 +489,7 @@ RUN --mount=type=cache,target=/root/.cache \
 
     # Review
     uv pip tree \
-        --package gpustack
+        --package seabed
     gpustack version
 
     # Download wasm-plugins
