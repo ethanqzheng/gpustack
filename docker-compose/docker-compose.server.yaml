@@ -1,6 +1,6 @@
 services:
   seabed-server:
-    image: swr.cn-east-3.myhuaweicloud.com/cloud-mdgx/seabed:{$TAG:-latest}
+    image: swr.cn-east-3.myhuaweicloud.com/cloud-mdgx/seabed:${TAG:-latest}
     container_name: seabed-server
     restart: unless-stopped
     volumes:
