@@ -1,3 +1,3 @@
 def metric_name(name: str) -> str:
-    METRIC_PREFIX = "gpustack:"
+    METRIC_PREFIX = "seabed:"
     return f"{METRIC_PREFIX}{name}"
