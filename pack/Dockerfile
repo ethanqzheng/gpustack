@@ -453,6 +453,8 @@ RUN --mount=type=cache,target=/root/.cache \
     export UV_SYSTEM_PYTHON=1
     export UV_PRERELEASE=allow
     export UV_LINK_MODE=copy
+	
+    uv pip install --no-build-isolation --system "openai-whisper==20240930"
 
     # Build GPUStack
     cd /workspace/gpustack \
