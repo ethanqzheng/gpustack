@@ -1,4 +1,4 @@
-# This workflow packs the Docker images for the GPUStack runtime.
+# This workflow packs the Docker images for the GPUStack runtime and pushes to Huawei Cloud SWR.
 
 name: Pack
 
@@ -24,9 +24,31 @@ on:
         required: false
         default: false
         type: boolean
+  push:
+    branches:
+      - "main"
+      - "v*-dev"
+    tags:
+      - "v*.*.*"
+    paths-ignore:
+      - "mkdocs.yml"
+      - "docs/**"
+      - "**.md"
+      - "**.mdx"
+      - "**.png"
+      - "**.jpg"
+      - "**.gif"
+  pull_request:
+    branches:
+      - "main"
+      - "v*-dev"
+    paths:
+      - ".github/workflows/pack.yaml"
+      - "pack/**"
 
 env:
   INPUT_PYTHON_VERSION: 3.11
+  # 华为云 SWR 配置
   INPUT_REGISTRY: swr.cn-east-3.myhuaweicloud.com
   INPUT_USERNAME: ${{ secrets.CI_SWR_USERNAME }}
   INPUT_PASSWORD: ${{ secrets.CI_SWR_PASSWORD }}
@@ -44,11 +66,19 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
           persist-credentials: false
+
       - name: Maximize Docker Build Space
         uses: gpustack/.github/.github/actions/maximize-docker-build-space@main
         with:
           deep-clean: true
           root-reserve-mb: 20480
+
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          image: tonistiigi/binfmt:qemu-v9.2.2
+          platforms: "arm64"
+
       - name: Setup BuildX
         uses: docker/setup-buildx-action@v3
         with:
@@ -56,12 +86,14 @@ jobs:
             network=host
             env.BUILDKIT_STEP_LOG_MAX_SIZE=-1
             env.BUILDKIT_STEP_LOG_MAX_SPEED=-1
+
       - name: Setup BuildX Cache
         id: setup-buildx-cache
         uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/.cache
           key: cache-mount-${{ hashFiles('uv.lock') }}
+
       - name: Restore BuildX Cache
         uses: reproducible-containers/buildkit-cache-dance@v3
         with:
@@ -69,95 +101,73 @@ jobs:
           cache-dir: ${{ github.workspace }}/.cache
           dockerfile: ${{ github.workspace }}/pack/Dockerfile
           skip-extraction: ${{ steps.setup-buildx-cache.outputs.cache-hit }}
-      - name: Setup QEMU
-        uses: docker/setup-qemu-action@v3
-        with:
-          image: tonistiigi/binfmt:qemu-v9.2.2
-          platforms: "arm64"
-      - name: Login Docker Registry
+
+      - name: Login Huawei SWR
         if: ${{ github.event_name != 'pull_request' }}
         uses: docker/login-action@v3
         with:
           registry: ${{ env.INPUT_REGISTRY }}
           username: ${{ env.INPUT_USERNAME }}
           password: ${{ env.INPUT_PASSWORD }}
+
       - name: Get Metadata
         id: metadata
         uses: docker/metadata-action@v5
         with:
           images: "${{ env.INPUT_REGISTRY }}/${{ env.INPUT_NAMESPACE }}/${{ env.INPUT_REPOSITORY }}"
+          # 混合模式：如果是手动触发则用输入值，如果是推送则用 Git 标签/分支
           tags: |
-            type=raw,value=${{ inputs.version }}
+            type=raw,value=${{ inputs.version }},enable=${{ github.event_name == 'workflow_dispatch' }}
             type=raw,value=latest,enable=${{ inputs.generate_latest_tag == true }}
+            type=ref,event=pr
+            type=raw,value=dev,enable=${{ github.ref == 'refs/heads/main' }}
+            type=pep440,pattern={{raw}},enable=${{ startsWith(github.ref, 'refs/tags/') }}
           flavor: |
             latest=false
+
       - name: Get Cache Ref
         run: |
-          #
-          # Use different cache ref for different branches.
-          #
-          # Examples:
-          # CACHE_FROM_REF
-          #   - vX.Y.Z                 -> "${REGISTRY}/${NAMESPACE}/seabed-cache:${VERSION}"
-          #   - PR/PUSH to branch      -> "${REGISTRY}/${NAMESPACE}/seabed-cache:${BRANCH}"
-          # CACHE_TO_REF
-          #   - vX.Y.Z                 -> "${REGISTRY}/${NAMESPACE}/seabed-cache:${VERSION}"
-          #   - PUSH to branch         -> "${REGISTRY}/${NAMESPACE}/seabed-cache:${BRANCH}"
-          #
-          # Stories:
-          # CACHE_FROM_REF
-          #   - Release tag v2.0.1         -> ${REGISTRY}/${NAMESPACE}/seabed-cache:v2.0
-          #   - PR to "main" branch        -> ${REGISTRY}/${NAMESPACE}/seabed-cache:main
-          #   - PR to "v2.0-dev" branch    -> ${REGISTRY}/${NAMESPACE}/seabed-cache:v2.0
-          #   - Push to "main" branch      -> ${REGISTRY}/${NAMESPACE}/seabed-cache:main
-          #   - Push to "master" branch    -> ${REGISTRY}/${NAMESPACE}/seabed-cache:master
-          # CACHE_TO_REF
-          #   - Release tag v2.0.1         -> ${REGISTRY}/${NAMESPACE}/seabed-cache:v2.0
-          #   - PR to "main" branch        -> ${REGISTRY}/${NAMESPACE}/seabed-cache:main
-          #   - Push to "master" branch    -> ${REGISTRY}/${NAMESPACE}/seabed-cache:master
-          #
-          CACHE_REGISTRY="${INPUT_REGISTRY}"
-          CACHE_NAMESPACE="${INPUT_NAMESPACE}"
-          CACHE_REPO="seabed-cache"
+          # 针对华为云 SWR 优化的缓存逻辑
+          CACHE_REPO="${{ env.INPUT_REGISTRY }}/${{ env.INPUT_NAMESPACE }}/seabed-cache"
+          DEFAULT_BRANCH="main"
           
-          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            # 手动触发时，根据版本号前缀取主版本作为缓存 key
+            VERSION_PREFIX=$(echo "${{ inputs.version }}" | cut -d. -f1,2)
+            CACHE_REF="${CACHE_REPO}:${VERSION_PREFIX}"
+          elif [[ "${GITHUB_REF}" == refs/tags/* ]]; then
             REF="${GITHUB_REF#refs/tags/}"
             IFS="." read -r VERSION_MAJOR VERSION_MINOR VERSION_PATCH <<< "${REF}"
-            VERSION="${VERSION_MAJOR}.${VERSION_MINOR}"
-            CACHE_REF="${CACHE_REGISTRY}/${CACHE_NAMESPACE}/${CACHE_REPO}:${VERSION}"
+            CACHE_REF="${CACHE_REPO}:${VERSION_MAJOR}.${VERSION_MINOR}"
           else
             REF="${GITHUB_BASE_REF:-${GITHUB_REF}}"
             BRANCH="${REF#refs/heads/}"
             BRANCH="${BRANCH%-dev}"
-            # Replace slashes with hyphens to make valid Docker tag
             BRANCH="${BRANCH//\//-}"
-            CACHE_REF="${CACHE_REGISTRY}/${CACHE_NAMESPACE}/${CACHE_REPO}:${BRANCH}"
+            CACHE_REF="${CACHE_REPO}:${BRANCH}"
           fi
           
-          # BuildKit will automatically handle cache miss with ignore-error=true
-          CACHE_FROM_REF="${CACHE_REF}"
-          CACHE_TO_REF="${CACHE_REF}"
+          echo "CACHE_FROM_REF=${CACHE_REF}" >> $GITHUB_ENV
+          echo "CACHE_TO_REF=${CACHE_REF}" >> $GITHUB_ENV
           
-          echo "CACHE_FROM_REF=${CACHE_FROM_REF}" >> $GITHUB_ENV
-          echo "CACHE_TO_REF=${CACHE_TO_REF}" >> $GITHUB_ENV
-          echo "DEBUG: GITHUB_BASE_REF=${GITHUB_BASE_REF}"
-          echo "DEBUG: GITHUB_REF=${GITHUB_REF}"
-          echo "DEBUG: CACHE_FROM_REF=${CACHE_FROM_REF}"
-          echo "DEBUG: CACHE_TO_REF=${CACHE_TO_REF}"
+          # 检查远程缓存是否存在，不存在则回退到 main 分支缓存以加速
+          if ! docker manifest inspect "${CACHE_REF}" >/dev/null 2>&1; then
+             echo "CACHE_FROM_REF=${CACHE_REPO}:${DEFAULT_BRANCH}" >> $GITHUB_ENV
+          fi
+
       - name: Get Image Labels
         run: |
-          #!/usr/bin/env bash
-
           set -eo pipefail
-
+          # 提取 metadata 生成的标准 label
           LABELS=(
             "org.opencontainers.image.source=${{ fromJSON(steps.metadata.outputs.json).labels['org.opencontainers.image.source'] }}"
             "org.opencontainers.image.version=${{ fromJSON(steps.metadata.outputs.json).labels['org.opencontainers.image.version'] }}"
             "org.opencontainers.image.revision=${{ fromJSON(steps.metadata.outputs.json).labels['org.opencontainers.image.revision'] }}"
             "org.opencontainers.image.created=${{ fromJSON(steps.metadata.outputs.json).labels['org.opencontainers.image.created'] }}"
           )
-          INPUT_DOCKER_MIRRORED_NAME_FILTER_LABELS=$(printf "%s;" "${LABELS[@]}")
-          echo "INPUT_DOCKER_MIRRORED_NAME_FILTER_LABELS=${INPUT_DOCKER_MIRRORED_NAME_FILTER_LABELS}" >> $GITHUB_ENV
+          FILTER_LABELS=$(printf "%s;" "${LABELS[@]}")
+          echo "INPUT_DOCKER_MIRRORED_NAME_FILTER_LABELS=${FILTER_LABELS}" >> $GITHUB_ENV
+
       - name: Package
         uses: docker/build-push-action@v6
         with:
@@ -167,6 +177,9 @@ jobs:
           ulimit: |
             nofile=65536:65536
           shm-size: 16G
+          # 华为云 SWR 兼容性建议：
+          # 某些旧版 SWR 对 provenance 和 sbom 的多架构索引支持有限，
+          # 如果推送失败，请保持这两项为 false。
           provenance: false
           sbom: false
           push: ${{ github.event_name != 'pull_request' }}
@@ -176,12 +189,8 @@ jobs:
           build-args: |
             PYTHON_VERSION=${{ env.INPUT_PYTHON_VERSION }}
             GPUSTACK_RUNTIME_DOCKER_MIRRORED_NAME_FILTER_LABELS=${{ env.INPUT_DOCKER_MIRRORED_NAME_FILTER_LABELS }}
-            VERSION=${{ inputs.version }}
-          tags: |
-            ${{ steps.metadata.outputs.tags }}
-          labels: |
-            ${{ steps.metadata.outputs.labels }}
-          cache-from: |
-            type=registry,ref=${{ env.CACHE_FROM_REF }}
-          cache-to: |
-            ${{ github.event_name != 'pull_request' && format('type=registry,mode=max,compression=gzip,ref={0},ignore-error=true', env.CACHE_TO_REF) || '' }}
+            VERSION=${{ inputs.version || github.ref_name }}
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+          cache-from: type=registry,ref=${{ env.CACHE_FROM_REF }}
+          cache-to: ${{ github.event_name != 'pull_request' && format('type=registry,mode=max,compression=gzip,ref={0},ignore-error=true', env.CACHE_TO_REF) || '' }}
